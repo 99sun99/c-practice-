@@ -4,7 +4,12 @@
 #include <vector>
 
 
+
+
 using namespace std;
+
+
+
 
 const int N = 40;
 template <class T>
@@ -24,6 +29,8 @@ inline void sum(int& accumulation, int n, vector<int> data,T &a)
 		accumulation = accumulation + data.at(i);
 }
 
+
+
 int main(int argc, char** argv)
 {
 	int i;
@@ -32,6 +39,7 @@ int main(int argc, char** argv)
 	int c = 3;
 
 	vector<int> data(N);//if no n we use push_back()
+
 	for (int i = 0; i < N; ++i)
 
 		data[i] = i;
