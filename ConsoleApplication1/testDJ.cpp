@@ -1,13 +1,14 @@
 #include "pch.h"
 #include <iostream>
 #include <limits>
-//#include "time.h"
 #include <ctime>    // For time()
 #include <cstdlib>  // For srand() and rand()
+#include <vector>
+#include <cmath>
+
 
 using namespace std;
 
-//#define MAXV 1000
 const int MAXV = 50;
 
 
@@ -16,7 +17,6 @@ public:
 	int key;
 	int weight;
 	EdgeNode *next;
-	//EdgeNode();
 	EdgeNode(int, int);
 };
 
@@ -31,6 +31,8 @@ class Graph {
 	bool directed;
 	int distance[MAXV];
 	int density;
+	int Max_V;
+	int Max_E;
 public:
 	//bool directed;
 	EdgeNode *edges[MAXV];
@@ -53,25 +55,27 @@ public:
 
 Graph::Graph(bool directed) 
 {
+	Max_V = MAXV;
+	Max_E = (pow(Max_V, 2) - Max_V) / 2;//undirected Max Edges' number;
 	this->directed = directed;
 	for (int i = 0; i < MAXV ; i++) {   //forget to initialize a ptr
 		this->edges[i] = nullptr;
 		this->distance[i] = std::numeric_limits<int>::max();
 	}
 
-
+	srand(time(0));
 	float a;
 	int b=0;
 	while (b == 0)
 	{
 		a = (float)(rand() % 100 + 1) / 100;
-		b = 50 * a;
+
+		b = Max_E * a;
 	}
 	
 	this->density = b;
-	//cout << "density is " << density << endl;
-
-
+	cout << "The total numbers of vertexes and edges are " << Max_V << " and " << Max_E << "." << endl ;
+	cout << "The density is " << a <<". "<< density <<" edges are selected as edges."<< endl;
 
 }
 
@@ -136,48 +140,46 @@ void Graph::insert(int x, int y, int weight,bool directed)
 }
 
 void Graph::set_edge() {
-	//if (x > 0 && x < MAXV  && y > 0 && y < MAXV ) {  
-	//	EdgeNode *edge = new EdgeNode(y, weight);
-	//	edge->next = this->edges[x];
-	//	this->edges[x] = edge;
-	//	if (!directed) { //if no direction , y->x is the same weight
-	//		insert_edge(y, x, weight, true);
-	//	}
-	//}
+
 	int k = 0;
 	bool reload = false;
-	
+	srand(time(0));
+	EdgeNode * curr = new EdgeNode(0,0);
+
 	while (k < this->density )
-	{
+	{	
 		int x = rand() % 50 ;
 		int y = rand() % 50 ;
-		int weight = rand() % 100 + 1;
+		int weight = rand() % 10 + 1;
 		
 		
 
 		if (this->edges[x] != nullptr)// check the dupicated pair
 		{
-			EdgeNode * curr= this->edges[x];
+			curr= this->edges[x];
 			while (curr != nullptr)
 			{
 				if (curr->key == y)
 				{
 					reload = true;
 				}
-
 				curr = curr->next;
 			}
+
 			if (!reload)
 			{
 				insert(x, y, weight, directed);
 				k++;
 			}
+			delete curr;
 		}
 		else 
 		{
 			insert(x, y, weight, directed);
 			k++;
 		}
+
+
 		reload = false;
 	}
 
@@ -313,64 +315,90 @@ int Graph::E()
 {
 	EdgeNode *current ;
 	//current = this->edges[0];
-	int i = 1;
+	//int i = 0;
 	int count = 0;
-	while(this->edges[i] != nullptr)
-	//for(int i=1;i< (MAXV + 1); i++)
+	//while(this->edges[i] != nullptr)
+	for(int i=0;i<MAXV;i++)
 
 	{	
 		//current = g->edges[i];
 		//if (g->edges[i] != nullptr)
 		
 			//EdgeNode *current = this->edges[i];
-		    current = this->edges[i];
+		if (this->edges[i] != nullptr)
+		{
+			current = this->edges[i];
 
 			while (current != nullptr)
 			{
 				//current = current->next;
 				++count;
 				current = current->next;
+				
 
 			}
-
-
-		
-
-		i++;
+		}
 	}
 
+	count /=  2;
 	return count;
 }
 
-void init_vars(bool discovered[], int distance[], int parent[]) 
+
+
+class ShortestPath
 {
-	for (int i = 0; i < MAXV ; i++) {
-		discovered[i] = false;
-		distance[i] = std::numeric_limits<int>::max();
-		parent[i] = -1;
+	Graph *Dgraph;
+	int start;
+	vector <int> distance;
+	vector <int> parent;
+	vector <bool> discovered;
+
+	public:
+	ShortestPath();
+	~ShortestPath();
+	void shortest_path(int);
+	void path(int);
+	void path_size(int);
+};
+
+ShortestPath::ShortestPath()
+{
+	
+	Dgraph = new Graph(false);
+	Dgraph->set_edge();
+	cout << "The graph contains " << Dgraph->V() << " vertexs and " << Dgraph->E() << " edges. Vertexes start from 0." << endl;
+	for (int i = 0; i < MAXV; i++)
+	{
+		distance.push_back(std::numeric_limits<int>::max());
+		parent.push_back(-1);
+		discovered.push_back(false);
 	}
+
 }
 
+ShortestPath::~ShortestPath()
+{}
 
-
-void dijkstra_shortest_path(Graph *g, int parent[], int distance[], int start) {
-
-	bool discovered[MAXV ];
+void ShortestPath::shortest_path(int start )
+{
+	//vector <int> Spath = {start};
 	EdgeNode *curr;
 	int v_curr;
 	int v_neighbor;
 	int weight;
 	int smallest_dist;
-
-	init_vars(discovered, distance, parent);
+	this->start = start;
 
 	distance[start] = 0;
 	v_curr = start;
 
+
+
 	while (discovered[v_curr] == false) {
 
 		discovered[v_curr] = true;
-		curr = g->edges[v_curr];
+		curr = Dgraph->edges[v_curr];
 
 		while (curr != nullptr) {
 
@@ -381,52 +409,102 @@ void dijkstra_shortest_path(Graph *g, int parent[], int distance[], int start) {
 				distance[v_neighbor] = distance[v_curr] + weight;
 				parent[v_neighbor] = v_curr;
 			}
-			curr = curr->next;
+
+			curr = curr->next;   
 		}
+
 
 		//set the next current vertex to the vertex with the smallest distance
 		smallest_dist = std::numeric_limits<int>::max();
-		for (int i = 0; i < (MAXV ); i++) {
+
+		for (int i = 0; i < (MAXV); i++) {
 			if (!discovered[i] && (distance[i] < smallest_dist)) {
 				v_curr = i;
 				smallest_dist = distance[i];
 			}
 		}
 	}
+
+
+
+
+
+
 }
 
-void print_shortest_path(int v, int parent[]) {
-	if (v > 0 && v < MAXV  && parent[v] != -1) {
-		cout << "shortest" << parent[v] << " ";
-		print_shortest_path(parent[v], parent);
+
+void ShortestPath::path( int end)
+
+{
+
+	if (end > -1 && end < MAXV  && parent[end] != -1) {
+		cout <<  parent[end] << " ";
+		path(parent[end]);
 	}
+
+
+}
+void ShortestPath::path_size( int end)
+{
+	//for (int i = 0; i < maxv; i++) {
+	//	if (distance[i] != std::numeric_limits<int>::max()) {
+	//		cout << "shortest distance from " << start << " to " << i << " is: " << distance[i] << endl;
+	//	}
+	//}
+
+	if (distance[end] != std::numeric_limits<int>::max())
+	{
+		cout << "The shortest distance between " << start << " and " << end << " is: " << distance[end] << endl;
+	}
+	else
+	{
+		cout << " the two vertexes are not connected!";
+	}
+
 }
 
-void print_distances(int start, int distance[]) {
-	for (int i = 0; i < MAXV ; i++) {
-		if (distance[i] != std::numeric_limits<int>::max()) {
-			cout << "Shortest distance from " << start << " to " << i << " is: " << distance[i] << endl;
-		}
-	}
-}
 
 int main() {
 
-	Graph *g = new Graph(false);
-	int parent[MAXV ];
-	int distance[MAXV ];
-	int start = 1;
-	
+	int begin =0;
+	int end = 10;
+	int i;
 
-	
-	g->set_edge();
-	g->print();
+	//ShortestPath *Dtest = new ShortestPath();
+	//Dtest->shortest_path(begin);
+	//srand(time(0));
+
+	//for ( i = 0; i <30; i++)
+	//{
+	//	srand(i);
+	//	end = rand() % 50 + 1 ;
+
+	//	cout << endl;
+	//	cout <<"The shortest path from " << begin << " to " << end << " is: ";
+	//	Dtest->path(end);
+	//	cout << endl;
+
+	//	Dtest->path_size(end);
+	//	
+
+	//}
+
+	//for ( i = 0; i < 20; i++)
+	//{
+	//	srand(i);
+	//	end = rand() % 50 + 1;
+	//	cout << i << "  ";
+	//	Dtest->path_size(end);
+
+	//}
 
 
-
-
-
-
+	bool a = true;
+	while (a == true)
+	{
+		a = false;
+		cout << "la la la " << endl;
+	}
 
 
 	

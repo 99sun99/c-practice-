@@ -7,9 +7,6 @@
 #include <queue>
 
 
-
-
-
 using namespace std;
 
 
@@ -33,8 +30,50 @@ public:
 	void print();
 	void swap(int&, int&);
 	vector<int> get_vector();
+	//void set_vector(vector<int>);//test the function
 };
 
+
+void my_priority_queue::chgPrioirity(int val, int pos)
+{
+	int k = 0;
+	if (this->arr.size() < pos + 1)
+	{
+		cout << "There is no such a position " << endl;
+		return;
+	}
+
+	this->arr[pos] = std::numeric_limits<int>::min();
+
+
+
+	while (pos>0)
+	{
+		//pNode = arr[this->parent(k)];
+		//current = arr[k];
+		//cout << this->parent(k) << "\t" << k << "\t" << pNode << "\t" << current<<"\t"<< arr.size() << endl;
+		if (arr[parent(pos)] > arr[pos])
+		{
+			swap(arr[this->parent(pos)], arr[pos]);
+		}
+		pos = this->parent(pos);
+	}
+
+	minPrioirty();
+	Insert(val);
+
+
+
+
+}
+
+
+
+
+//void my_priority_queue::set_vector(vector<int> test)
+//{
+//	this->arr = test;
+//}
 vector<int> my_priority_queue::get_vector()
 {
 	return arr;
@@ -115,9 +154,6 @@ bool my_priority_queue::contains(int val)
 
 	return result;
 }
-
-
-
 
 my_priority_queue::my_priority_queue()
 {
@@ -226,78 +262,92 @@ void my_priority_queue::print()
 
 }
 
-int main()
-{
-	int k = 0;
-	int i = 0;
-	int temp = 0;
-	int max = 100;
-	priority_queue <int, vector<int>, greater<int>>  PQ_lib;//min heap  ,priority_queue <int>  maxheap
-	vector <int> comp1;
-	vector <int> comp2;
 
-	my_priority_queue* PQ = new my_priority_queue();
-
-	
-	//for (k; k < 60; k++)
-	//{
-	//	PQ = new my_priority_queue();
-
-	//	srand(k);
-
-
-	//	for (i=0; i < 60; i++)
-	//	{
-	//		PQ->Insert(rand() % 100 + 1);
-	//		//cout << i << endl;
-	//	}
-
-	//	cout << PQ->top() << endl;
-	//	PQ->print();
-
-
-	//	delete PQ;
-	//	
-	//}
-
-
-	srand(time(0));
-
-
-	for (i = 0; i < max; i++)
-	{
-		temp = rand() % 100 + 1;
-		PQ->Insert(temp);
-		PQ_lib.push(temp);
-	}
-
-	
-	for (i = 0; i < max; i++)
-
-	{
-		//cout << "top\t" << PQ->top() << endl;
-		//PQ->print();
-		//PQ->print();
-		k = PQ->minPrioirty();
-		temp = PQ_lib.top();
-		//cout << "k\t" << k << "\t temp \t" << temp << endl;
-		//if (k != temp)
-
-		
-		comp1.push_back(k);
-		comp2.push_back(temp);
-		PQ_lib.pop();
-		
-	}
-
-	cout << static_cast <bool> (comp1 == comp2) << endl;
-
-
-
-
-
-
-		return 0;
-}
-
+//
+//
+//int main()
+//{
+//	int k = 0;
+//	int i = 0;
+//	int temp = 0;
+//	int max = 50;
+//	vector <int> test = { 4,   23,   10,   30,   47,   18,   17,   37,   33,   63,   59,   28,   23 ,  48 ,  19,   80,   70 ,  40,   64,   100,   100,   85,   95,   78,   46,   35,   60,   95,   59,   52 };
+//	priority_queue <int, vector<int>, greater<int>>  PQ_lib;//min heap  ,priority_queue <int>  maxheap
+//	vector <int> comp1;
+//	vector <int> comp2;
+//
+//	my_priority_queue* PQ = new my_priority_queue();
+//	//PQ->set_vector(test);
+//	
+//	//for (k; k < 60; k++)
+//	//{
+//	//	pq = new my_priority_queue();
+//
+//	//	srand(k);
+//
+//
+//	//	for (i=0; i < 60; i++)
+//	//	{
+//	//		pq->insert(rand() % 100 + 1);
+//	//		//cout << i << endl;
+//	//	}
+//
+//	//	cout << pq->top() << endl;
+//	//	pq->print();
+//
+//
+//	//	delete pq;
+//	//	
+//	//}
+//
+//
+//	srand(time(0));
+//
+//
+//	for (i = 0; i < max; i++)
+//	{
+//		temp = rand() % 100 + 1;
+//		PQ->Insert(temp);
+//		PQ_lib.push(temp);
+//	}
+//
+//	PQ->print();
+//	PQ->chgPrioirity(12, 30);
+//
+//	for (i = 0; i < max; i++)
+//	{
+//		PQ->print();
+//		cout << "top\t" << PQ->minPrioirty() << endl;
+//
+//	}
+//	
+//	
+//	//for (i = 0; i < max; i++)
+//
+//	//{
+//	//	//cout << "top\t" << PQ->top() << endl;
+//	//	//PQ->print();
+//	//	//PQ->print();
+//	//	k = PQ->minPrioirty();
+//	//	temp = PQ_lib.top();
+//	//	//cout << "k\t" << k << "\t temp \t" << temp << endl;
+//	//	//if (k != temp)
+//
+//	//	
+//	//	comp1.push_back(k);
+//	//	comp2.push_back(temp);
+//	//	PQ_lib.pop();
+//	//	
+//	//}
+//
+//	//cout << static_cast <bool> (comp1 == comp2) << endl;
+//
+//
+//
+//
+//
+//
+//		return 0;
+//}
+//
 
