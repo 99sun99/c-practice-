@@ -8,6 +8,7 @@
 #include<string>
 #include<typeinfo>
 #include <sstream> 
+#include<set>
 //#include "string.h"
 
 using namespace std;
@@ -16,7 +17,6 @@ using namespace std;
 
 int  main(int argc , char *argv )
 {
-	
 		//ifstream word_file("word.txt");
 		ifstream word_file("kruskal_init.txt");
 		//istream_iterator<string> start(word_file), end; //if you want to iterate sth ,that must stream , string or file
@@ -41,6 +41,8 @@ int  main(int argc , char *argv )
 				article.push_back(line);
 				//cout << line << endl;
 			}
+
+
 			word_file.close();
 		}
 
@@ -68,6 +70,7 @@ int  main(int argc , char *argv )
 				iss >> subs;//stoi  one by one
 				try
 				{
+					//cout << iss;
 					//a = stoi(subs);
 					//cout << a << endl;
 					temp.push_back(stoi(subs));
@@ -79,6 +82,7 @@ int  main(int argc , char *argv )
 					continue;
 				}
 			} while (iss);
+			//cout << endl;
 
 			p.push_back(temp);
 
@@ -106,6 +110,18 @@ int  main(int argc , char *argv )
 		//	cout << str1 << "\t";
 		//}
 		//cout << endl;
+
+		vector<int> test(10, 20);
+		cout << test[0] << endl;
+		for (auto &i : test)
+		{
+			i = 15;
+		}
+
+		cout << test[0] << endl;
+
+
+		cout << "sizeof(test) "<<sizeof(test) << endl;
 
 		return 0;
 }
